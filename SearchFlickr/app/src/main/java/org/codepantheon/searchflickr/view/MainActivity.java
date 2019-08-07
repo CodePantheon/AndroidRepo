@@ -41,17 +41,8 @@ public class MainActivity extends AppCompatActivity {
         m_RecyclerView.setAdapter(m_ImageAdapter);
         m_RecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        m_SearchEditText.setOnKeyListener(this::enterKeyPressedEventHandler);
         m_ImagePresenter.getImagesFetchedEvent().add(this::imagesArrivedEventHandler);
-
-        m_SearchEditText.setOnKeyListener((view, i, keyEvent) -> {
-            if(!(keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                    && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                return false;
-            }
-
-            onOKButtonClick(view);
-            return true;
-        });
     }
 
     public void onOKButtonClick(View view) {
@@ -64,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
         m_ImagePresenter.fetchImagesAsync(searchKeyword);
 
         hideKeyboard();
+    }
+
+    private boolean enterKeyPressedEventHandler(View view, int i, KeyEvent keyEvent) {
+        if(!(keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            return false;
+        }
+
+        onOKButtonClick(view);
+        return true;
     }
 
     private void imagesArrivedEventHandler(ImageInfo[] imageInfoArray) {
