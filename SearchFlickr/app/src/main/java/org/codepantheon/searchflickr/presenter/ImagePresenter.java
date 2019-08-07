@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
-import org.codepantheon.searchflickr.eventutilities.Event;
+import org.codepantheon.searchflickr.eventutilities.EventImpl;
 import org.codepantheon.searchflickr.model.ImageInfo;
 import org.codepantheon.searchflickr.model.ImageInfoCollection;
 import org.codepantheon.searchflickr.utils.NetworkUtils;
@@ -15,19 +15,22 @@ import org.json.JSONObject;
 import java.net.URL;
 
 public class ImagePresenter {
+    private final EventImpl<ImageInfo[]> mImagesFetchedEvent = new EventImpl<>();
 
-    private static final String TAG = ImagePresenter.class.getSimpleName();
-    private Event<ImageInfo[]> mImagesFetchedEvent = new Event<>();
-
-    public void addImagesFetchedEventHandler(Event.EventHandler<ImageInfo[]> eventHandler) {mImagesFetchedEvent.add(eventHandler);}
-
-    public void removeImagesFetchedEventHandler(Event.EventHandler<ImageInfo[]> eventHandler) {mImagesFetchedEvent.remove(eventHandler);}
-
-    public void fetchImagesAsync(String imageSearchKeyword){
-        new FetchImageTask().execute(imageSearchKeyword);
+    public EventImpl.Event<ImageInfo[]> getImagesFetchedEvent(){
+        return mImagesFetchedEvent.getEvent();
     }
 
-    private class FetchImageTask extends AsyncTask<String, Void, ImageInfo[]>{
+    public void fetchImagesAsync(String imageSearchKeyword){
+        new FetchImageTask(this).execute(imageSearchKeyword);
+    }
+
+    private static class FetchImageTask extends AsyncTask<String, Void, ImageInfo[]>{
+        private final ImagePresenter mImagePresenter;
+
+        private FetchImageTask(ImagePresenter imagePresenter){
+            mImagePresenter = imagePresenter;
+        }
 
         @Override
         protected ImageInfo[] doInBackground(String... params) {
@@ -40,7 +43,7 @@ public class ImagePresenter {
 
             try {
                 String jsonImageDetails = NetworkUtils.getResponseFromHttpUrl(imageSearchUrl);
-                Log.v(TAG, jsonImageDetails);
+                Log.v("SearchFlickr", jsonImageDetails);
 
                 return deserialize(jsonImageDetails);
             } catch (Exception e) {
@@ -51,7 +54,7 @@ public class ImagePresenter {
 
         @Override
         protected void onPostExecute(ImageInfo[] imageInfos) {
-            mImagesFetchedEvent.invoke(imageInfos);
+            mImagePresenter.mImagesFetchedEvent.invoke(imageInfos);
         }
 
         private ImageInfo[] deserialize(String jsonImageDetails){

@@ -2,6 +2,8 @@ package org.codepantheon.searchflickr.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Locale;
+
 public final class ImageInfo {
     private static final String IMAGE_URL_FORMAT = "https://farm%d.staticflickr.com/%s/%s_%s.jpg";
 
@@ -33,6 +35,25 @@ public final class ImageInfo {
     private int mIsFamily;
 
     public String getImageUrl(){
-        return String.format(IMAGE_URL_FORMAT, mFarm, mServer, mId, mSecret);
+        return String.format(Locale.getDefault(), IMAGE_URL_FORMAT, mFarm, mServer, mId, mSecret);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // If the object is compared with itself then return true
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof ImageInfo)) {
+            return false;
+        }
+
+        return getImageUrl().equals(((ImageInfo)obj).getImageUrl());
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

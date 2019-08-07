@@ -23,13 +23,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
 
     public void setImageSource(List<ImageInfo> imageSources) {
         m_imageSources = imageSources;
-        //m_imageSources.add(new ImageInfo());
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ImageAdapter.ImageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.i("SearchFlickr", "onCreateViewHolder");
+        Log.v("SearchFlickr", "onCreateViewHolder");
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.image_item, parent, false);
 
@@ -38,7 +38,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ImageHolder holder, int position) {
-        Log.i("SearchFlickr", "onBindViewHolder");
+        Log.v("SearchFlickr", "onBindViewHolder");
         holder.updateImage(m_imageSources.get(position));
     }
 
@@ -48,20 +48,21 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageHolder>
     }
 
     class ImageHolder extends RecyclerView.ViewHolder {
+        private ImageView mImageView;
+        private ImageInfo mImageInfo;
 
-        private ImageView imageView;
-
-        public ImageHolder(@NonNull View itemView) {
+        private ImageHolder(@NonNull View itemView) {
             super(itemView);
-
-            imageView = itemView.findViewById(R.id.iv_Image);
+            mImageView = itemView.findViewById(R.id.iv_Image);
         }
 
-        public void updateImage(ImageInfo imageInfo) {
+        private void updateImage(ImageInfo imageInfo) {
+            if(imageInfo.equals(mImageInfo)){
+                return;
+            }
 
-            Picasso.with(itemView.getContext()).load(imageInfo.getImageUrl()).into(imageView);
-            //Picasso.with(itemView.getContext()).load("https://farm66.staticflickr.com/65535/48438083587_7afffdd5f6.jpg").into(imageView);
+            mImageInfo = imageInfo;
+            Picasso.with(itemView.getContext()).load(mImageInfo.getImageUrl()).into(mImageView);
         }
     }
-
 }

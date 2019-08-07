@@ -4,11 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.codepantheon.searchflickr.R;
 import org.codepantheon.searchflickr.model.ImageInfo;
@@ -21,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private final ImagePresenter m_ImagePresenter = new ImagePresenter();
     private RecyclerView m_RecyclerView;
     private EditText m_SearchEditText;
-    private Button m_SearchButton;
     private ImageAdapter m_ImageAdapter;
     private ProgressBar m_LoadingIndicator;
 
@@ -31,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         m_SearchEditText = findViewById(R.id.et_SearchText);
-        m_SearchButton = findViewById(R.id.btn_OK);
         m_RecyclerView = findViewById(R.id.rv_imageList);
         m_LoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
@@ -39,23 +41,48 @@ public class MainActivity extends AppCompatActivity {
         m_RecyclerView.setAdapter(m_ImageAdapter);
         m_RecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        m_ImagePresenter.addImagesFetchedEventHandler(this::imagesArrivedEventHandler);
+        m_ImagePresenter.getImagesFetchedEvent().add(this::imagesArrivedEventHandler);
+
+        m_SearchEditText.setOnKeyListener((view, i, keyEvent) -> {
+            if(!(keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                    && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                return false;
+            }
+
+            onOKButtonClick(view);
+            return true;
+        });
     }
 
     public void onOKButtonClick(View view) {
         String searchKeyword = m_SearchEditText.getText().toString();
-        if (searchKeyword == null || searchKeyword.isEmpty()) {
+        if (searchKeyword.isEmpty()) {
             return;
         }
 
         m_LoadingIndicator.setVisibility(View.VISIBLE);
         m_ImagePresenter.fetchImagesAsync(searchKeyword);
+
+        hideKeyboard();
     }
 
     private void imagesArrivedEventHandler(ImageInfo[] imageInfoArray) {
+        if(imageInfoArray == null || imageInfoArray.length == 0){
+            Toast.makeText(this, "Error. Please Try Again!", Toast.LENGTH_LONG)
+                 .show();
+        }
+        else {
+            m_ImageAdapter.setImageSource(Arrays.asList(imageInfoArray));
+        }
 
-        m_ImageAdapter.setImageSource(Arrays.asList(imageInfoArray));
         m_LoadingIndicator.setVisibility(View.INVISIBLE);
-        m_ImageAdapter.notifyDataSetChanged();
+    }
+
+    private void hideKeyboard() {
+        View focusedView = this.getCurrentFocus();
+        if (focusedView != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
+        }
     }
 }

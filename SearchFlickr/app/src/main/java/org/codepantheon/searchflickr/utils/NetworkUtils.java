@@ -30,7 +30,6 @@ import java.util.Scanner;
  */
 public final class NetworkUtils {
 
-    private static final String TAG = NetworkUtils.class.getSimpleName();
     private static final String FLICKR_BASE_URL = "https://www.flickr.com/services/rest";
 
     private final static String METHOD_PARAM = "method";
@@ -60,7 +59,7 @@ public final class NetworkUtils {
             e.printStackTrace();
         }
 
-        Log.v(TAG, "Built URI " + searchUrl);
+        Log.v("SearchFlickr", "Built URI " + searchUrl);
 
         return searchUrl;
     }
