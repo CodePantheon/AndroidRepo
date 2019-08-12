@@ -1,45 +1,61 @@
 package org.codepantheon.takenotes.model;
 
-public class NoteInfo {
-
+public final class NoteInfo {
     private long id;
     private String title;
     private String content;
     private String summary;
+    private String modifiedDate;
 
     public NoteInfo(String title, String content) {
         this.title = title;
         this.content = content;
     }
 
-    public NoteInfo(long aLong, String string, String string1, String string2) {
-    }
-
-    public void setId(long id) {
+    public NoteInfo(long id, String title, String content, String summary) {
         this.id = id;
-    }
-
-    public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setContent(String content) {
         this.content = content;
+        this.summary = summary;
     }
 
     public long getId() {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
         return content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public String getSummary() {
         return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(String modifiedDate) {
+        this.modifiedDate = modifiedDate;
     }
 }

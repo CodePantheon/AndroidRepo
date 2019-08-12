@@ -16,4 +16,8 @@ public class NotePresenter {
     public List<NoteInfo> getAllNotes() {
         return noteDatabase.getAllNotes();
     }
+
+    public long saveNote(NoteInfo noteInfo){
+        return noteDatabase.addNote(noteInfo);
+    }
 }

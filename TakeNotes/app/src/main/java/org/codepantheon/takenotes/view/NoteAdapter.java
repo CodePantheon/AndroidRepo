@@ -14,18 +14,11 @@ import org.codepantheon.takenotes.model.NoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.List;
 
 class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
-    private List<NoteInfo> mNotes;
-
-    public NoteAdapter(List<NoteInfo> notes) {
-        if(notes == null) {
-            throw new InvalidParameterException("notes cant be null");
-        }
-
-        mNotes = notes;
-    }
+    private List<NoteInfo> noteInfos = new ArrayList<>();
 
     @NonNull
     @Override
@@ -40,29 +33,29 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         Log.v("TakeNotes", "onCreateViewHolder");
-        holder.setNoteInfo(mNotes.get(position));
+        holder.setNoteInfo(noteInfos.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mNotes.size();
+        return noteInfos.size();
     }
 
-    public void setNotes(List<NoteInfo> notes) {
-        if(notes == null) {
-            throw new InvalidParameterException("notes cant be null");
+    void setNotes(List<NoteInfo> noteInfos) {
+        if(noteInfos == null) {
+            throw new InvalidParameterException("noteInfos can't be null");
         }
 
-        mNotes = notes;
+        this.noteInfos = noteInfos;
         notifyDataSetChanged();
     }
 
-    public static class NoteViewHolder extends RecyclerView.ViewHolder{
+    static class NoteViewHolder extends RecyclerView.ViewHolder{
         private final TextView mTitleTextView;
         private final TextView mModifiedDateTextView;
         private final TextView mSummeryTextView;
 
-        public NoteViewHolder(@NotNull View itemView) {
+        private NoteViewHolder(@NotNull View itemView) {
             super(itemView);
 
             mTitleTextView = itemView.findViewById(R.id.tv_title);
@@ -70,7 +63,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
             mSummeryTextView = itemView.findViewById(R.id.tv_summary);
         }
 
-        public void setNoteInfo(NoteInfo noteInfo){
+        private void setNoteInfo(NoteInfo noteInfo){
             mTitleTextView.setText(noteInfo.getTitle());
             mModifiedDateTextView.setText(noteInfo.getModifiedDate());
             mSummeryTextView.setText(noteInfo.getSummary());

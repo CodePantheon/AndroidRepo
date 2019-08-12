@@ -4,17 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import org.codepantheon.takenotes.R;
 import org.codepantheon.takenotes.model.NoteInfo;
@@ -24,26 +21,30 @@ import org.codepantheon.takenotes.presenter.NotePresenterFactory;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private final NotePresenter mNotePresenter = NotePresenterFactory.create();
-    private NoteAdapter mNoteAdapter;
-
+    private NotePresenter notePresenter;
+    private NoteAdapter noteAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        List<NoteInfo> notes = mNotePresenter.getAllNotes();
-        mNoteAdapter.setNotes(notes);
+        notePresenter = NotePresenterFactory.create(this);
+        noteAdapter = new NoteAdapter();
 
         RecyclerView mRecyclerView = findViewById(R.id.rv_note_container);
-        mRecyclerView.setAdapter(mNoteAdapter);
+        mRecyclerView.setAdapter(noteAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(this::goToNewNote);
+    }
+
+    @Override
+    protected void onResume() {
+        List<NoteInfo> notes = notePresenter.getAllNotes();
+        noteAdapter.setNotes(notes);
+        super.onResume();
     }
 
     @Override
@@ -62,13 +63,14 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
+            //startActivity(new Intent(this, SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void goToNewNote(View view) {
-        Toast.makeText(this, "Create new note", Toast.LENGTH_SHORT).show();
+        Intent newPageIntent = new Intent(this, NewNoteActivity.class);
+        startActivity(newPageIntent);
     }
 }
