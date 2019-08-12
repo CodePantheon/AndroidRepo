@@ -19,6 +19,7 @@ public class HomeActivity extends AppCompatActivity {
         if (!sharedPreferences.getBoolean("is_logged_in", false)) {
             startActivity(new Intent(this, LoginActivity.class));
         }
+
     }
 
     @Override
