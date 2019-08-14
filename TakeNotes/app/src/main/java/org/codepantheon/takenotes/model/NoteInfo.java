@@ -1,22 +1,30 @@
 package org.codepantheon.takenotes.model;
 
-public final class NoteInfo {
+import android.text.TextUtils;
+
+import java.io.Serializable;
+
+public final class NoteInfo implements Serializable {
+    private static final String DEFAULT_TITLE = "Note Title";
+
     private long id;
-    private String title;
-    private String content;
-    private String summary;
-    private String modifiedDate;
+    private String title = "";
+    private String content = "";
+    private String summary = "";
+    private String modifiedDate = "";
 
     public NoteInfo(String title, String content) {
-        this.title = title;
+        this.title = title.equals("") ? DEFAULT_TITLE : title;
         this.content = content;
+        this.summary = content;
     }
 
-    public NoteInfo(long id, String title, String content, String summary) {
+    public NoteInfo(long id, String title, String content, String modifiedDate) {
         this.id = id;
-        this.title = title;
+        this.title = title.equals("") ? DEFAULT_TITLE : title;
+        this.modifiedDate = modifiedDate;
         this.content = content;
-        this.summary = summary;
+        this.summary = content;
     }
 
     public long getId() {
@@ -43,19 +51,23 @@ public final class NoteInfo {
         this.content = content;
     }
 
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
     public String getModifiedDate() {
         return modifiedDate;
     }
 
     public void setModifiedDate(String modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public boolean isEmpty(){
+        return (TextUtils.isEmpty(title) || title.equals(DEFAULT_TITLE)) && TextUtils.isEmpty(content);
+    }
+
+    private void setSummary(String summary) {
+        this.summary = summary;
     }
 }

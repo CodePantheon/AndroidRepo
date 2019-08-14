@@ -18,7 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
+    interface OnNoteSelectedListener{
+        void onNoteSelected(NoteInfo noteInfo);
+    }
+
     private List<NoteInfo> noteInfos = new ArrayList<>();
+    private OnNoteSelectedListener onNoteSelectedListener;
 
     @NonNull
     @Override
@@ -27,7 +32,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.note_item, parent,false);
 
-        return new NoteViewHolder(view);
+        return new NoteViewHolder(view, this);
     }
 
     @Override
@@ -50,23 +55,42 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         notifyDataSetChanged();
     }
 
+    void setOnNoteSelectedListener(OnNoteSelectedListener onNoteSelectedListener){
+        this.onNoteSelectedListener = onNoteSelectedListener;
+    }
+
     static class NoteViewHolder extends RecyclerView.ViewHolder{
+        private final NoteAdapter noteAdapter;
         private final TextView mTitleTextView;
         private final TextView mModifiedDateTextView;
         private final TextView mSummeryTextView;
+        private NoteInfo noteInfo;
 
-        private NoteViewHolder(@NotNull View itemView) {
+        private NoteViewHolder(@NotNull View itemView, NoteAdapter noteAdapter) {
             super(itemView);
 
+            this.noteAdapter = noteAdapter;
             mTitleTextView = itemView.findViewById(R.id.tv_title);
             mModifiedDateTextView = itemView.findViewById(R.id.tv_date);
             mSummeryTextView = itemView.findViewById(R.id.tv_summary);
+
+            itemView.setOnClickListener(this::onItemClick);
         }
 
         private void setNoteInfo(NoteInfo noteInfo){
             mTitleTextView.setText(noteInfo.getTitle());
             mModifiedDateTextView.setText(noteInfo.getModifiedDate());
             mSummeryTextView.setText(noteInfo.getSummary());
+
+            this.noteInfo = noteInfo;
+        }
+
+        private void onItemClick(View view) {
+            if(this.noteAdapter.onNoteSelectedListener == null){
+                return;
+            }
+
+            noteAdapter.onNoteSelectedListener.onNoteSelected(noteInfo);
         }
     }
 }
