@@ -4,13 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.codepantheon.takenotes.R;
 import org.codepantheon.takenotes.model.NoteInfo;
 import org.codepantheon.takenotes.presenter.NotePresenter;
 import org.codepantheon.takenotes.presenter.NotePresenterFactory;
 
-public class NewNoteActivity extends ChildActivity {
-    private NoteInfo currentNoteInfo;
+public class NewNoteActivity extends AppCompatActivity {
+    private NoteInfo currentNoteInfo = new NoteInfo();
     private NotePresenter notePresenter;
     private EditText titleEditText;
     private EditText contentEditText;
@@ -42,10 +44,11 @@ public class NewNoteActivity extends ChildActivity {
     protected void onPause() {
         String title = titleEditText.getText().toString();
         String content = contentEditText.getText().toString();
-        NoteInfo newNoteInfo = new NoteInfo(title, content);
+        currentNoteInfo.setTitle(title);
+        currentNoteInfo.setContent(content);
 
-        if(!newNoteInfo.isEmpty()) {
-            notePresenter.saveNote(newNoteInfo);
+        if(!currentNoteInfo.isEmpty()) {
+            notePresenter.saveNote(currentNoteInfo);
         }
         super.onPause();
     }

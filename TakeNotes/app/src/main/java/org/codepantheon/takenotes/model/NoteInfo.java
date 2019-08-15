@@ -6,18 +6,15 @@ import java.io.Serializable;
 
 public final class NoteInfo implements Serializable {
     private static final String DEFAULT_TITLE = "Note Title";
+    private static final int INVALID_ID = -1;
 
-    private long id;
+    private long id = INVALID_ID;
     private String title = "";
     private String content = "";
     private String summary = "";
     private String modifiedDate = "";
 
-    public NoteInfo(String title, String content) {
-        this.title = title.equals("") ? DEFAULT_TITLE : title;
-        this.content = content;
-        this.summary = content;
-    }
+    public NoteInfo() {}
 
     public NoteInfo(long id, String title, String content, String modifiedDate) {
         this.id = id;
@@ -65,6 +62,10 @@ public final class NoteInfo implements Serializable {
 
     public boolean isEmpty(){
         return (TextUtils.isEmpty(title) || title.equals(DEFAULT_TITLE)) && TextUtils.isEmpty(content);
+    }
+
+    public boolean isNewNote(){
+        return id == INVALID_ID;
     }
 
     private void setSummary(String summary) {

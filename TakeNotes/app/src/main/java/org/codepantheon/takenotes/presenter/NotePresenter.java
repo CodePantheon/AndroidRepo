@@ -17,7 +17,12 @@ public class NotePresenter {
         return noteDatabase.getAllNotes();
     }
 
-    public long saveNote(NoteInfo noteInfo){
-        return noteDatabase.addNote(noteInfo);
+    public void saveNote(NoteInfo noteInfo){
+        if(noteInfo.isNewNote()){
+            noteDatabase.addNote(noteInfo);
+        }
+        else {
+            noteDatabase.editNote(noteInfo);
+        }
     }
 }
