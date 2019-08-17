@@ -55,6 +55,12 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         notifyDataSetChanged();
     }
 
+    NoteInfo deleteNoteAtPosition(int position) {
+        NoteInfo deletedNote = this.noteInfos.remove(position);
+        notifyDataSetChanged();
+        return deletedNote;
+    }
+
     void setOnNoteSelectedListener(OnNoteSelectedListener onNoteSelectedListener){
         this.onNoteSelectedListener = onNoteSelectedListener;
     }

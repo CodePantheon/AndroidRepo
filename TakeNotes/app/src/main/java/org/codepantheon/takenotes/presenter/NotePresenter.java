@@ -25,4 +25,8 @@ public class NotePresenter {
             noteDatabase.editNote(noteInfo);
         }
     }
+
+    public void deleteNote(NoteInfo noteInfo){
+        noteDatabase.deleteNote(noteInfo);
+    }
 }
