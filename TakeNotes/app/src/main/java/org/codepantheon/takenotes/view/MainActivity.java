@@ -23,11 +23,14 @@ import org.codepantheon.takenotes.presenter.NotePresenter;
 import org.codepantheon.takenotes.presenter.NotePresenterFactory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private NotePresenter notePresenter;
     private NoteAdapter noteAdapter;
+    private RecyclerView mRecyclerView;
+    private List<NoteInfo> selectedNotes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
         notePresenter = NotePresenterFactory.create(this);
         noteAdapter = new NoteAdapter();
         noteAdapter.setOnNoteSelectedListener(this::onNoteSelected);
+        noteAdapter.setOnNoteLongClickListener(this::onNoteLongClicked);
 
-        RecyclerView mRecyclerView = findViewById(R.id.rv_note_container);
+        mRecyclerView = findViewById(R.id.rv_note_container);
         mRecyclerView.setAdapter(noteAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -57,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 // Here is where you'll implement swipe to delete
                 int position = viewHolder.getAdapterPosition();
                 onNoteItemSwipe(position);
-
             }
         };
         new ItemTouchHelper(callback).attachToRecyclerView(mRecyclerView);
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        selectedNotes.clear();
         List<NoteInfo> notes = notePresenter.getAllNotes();
         noteAdapter.setNotes(notes);
         super.onResume();
@@ -102,8 +106,30 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_settings) {
             showSettingsPage();
         }
+        else if (item.getItemId() == R.id.delete_menu_button) {
+            deleteSelectedNotes();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // if items are selected, then back button clears selection instead of pausing application.
+    @Override
+    public void onBackPressed() {
+        if (noteAdapter.removeSelection()) {
+            selectedNotes.clear();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    private void deleteSelectedNotes() {
+        for ( NoteInfo note : selectedNotes) {
+            notePresenter.deleteNote(note);
+        }
+        noteAdapter.removeSelection();
+        selectedNotes.clear();
+        noteAdapter.setNotes(notePresenter.getAllNotes());
     }
 
     private void showNewNotePage(View view) {
@@ -120,5 +146,9 @@ public class MainActivity extends AppCompatActivity {
         Intent editNotePageIntent = new Intent(this, NewNoteActivity.class);
         editNotePageIntent.putExtra(NoteInfo.class.getSimpleName(), noteInfo);
         startActivity(editNotePageIntent);
+    }
+
+    private void onNoteLongClicked(NoteInfo noteInfo) {
+        selectedNotes.add(noteInfo);
     }
 }

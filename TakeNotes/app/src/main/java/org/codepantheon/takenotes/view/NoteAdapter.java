@@ -1,5 +1,6 @@
 package org.codepantheon.takenotes.view;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +23,14 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         void onNoteSelected(NoteInfo noteInfo);
     }
 
+    interface OnNoteLongClickListener{
+        void OnNoteLongClick(NoteInfo noteInfo);
+    }
+
     private List<NoteInfo> noteInfos = new ArrayList<>();
     private OnNoteSelectedListener onNoteSelectedListener;
+    private OnNoteLongClickListener onNoteLongClickListener;
+    private boolean areItemsSelected = false;
 
     @NonNull
     @Override
@@ -38,7 +45,20 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         Log.v("TakeNotes", "onCreateViewHolder");
+
+        // sets default background color for each note item; this helps in resetting selection.
+        holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
         holder.setNoteInfo(noteInfos.get(position));
+    }
+
+    // resets background of each card item on selection removal.
+    boolean removeSelection() {
+        if (areItemsSelected) {
+            notifyDataSetChanged();
+            areItemsSelected = false;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -55,6 +75,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         notifyDataSetChanged();
     }
 
+    // deletes a particular card from adapter's noteInfo list and refreshes.
     NoteInfo deleteNoteAtPosition(int position) {
         NoteInfo deletedNote = this.noteInfos.remove(position);
         notifyDataSetChanged();
@@ -63,6 +84,10 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
     void setOnNoteSelectedListener(OnNoteSelectedListener onNoteSelectedListener){
         this.onNoteSelectedListener = onNoteSelectedListener;
+    }
+
+    void setOnNoteLongClickListener(OnNoteLongClickListener onNoteLongClickListener){
+        this.onNoteLongClickListener = onNoteLongClickListener;
     }
 
     static class NoteViewHolder extends RecyclerView.ViewHolder{
@@ -81,6 +106,23 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
             mSummeryTextView = itemView.findViewById(R.id.tv_summary);
 
             itemView.setOnClickListener(this::onItemClick);
+
+            // long click event subscription
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                public boolean onLongClick(View view) {
+                    setLongClickSelection(view);
+                    return true;
+                }
+            });
+        }
+
+        // long click event handler
+        private void setLongClickSelection(View view) {
+            if (noteAdapter.onNoteLongClickListener != null) {
+                view.setBackgroundColor(Color.parseColor("#ffb2b2"));
+                noteAdapter.onNoteLongClickListener.OnNoteLongClick(noteInfo);
+                noteAdapter.areItemsSelected = true;
+            }
         }
 
         private void setNoteInfo(NoteInfo noteInfo){
@@ -92,6 +134,12 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         }
 
         private void onItemClick(View view) {
+
+            // if long click selection is already in progress, treat normal click also for selection.
+            if (noteAdapter.areItemsSelected) {
+                setLongClickSelection(view);
+                return;
+            }
             if(this.noteAdapter.onNoteSelectedListener == null){
                 return;
             }
