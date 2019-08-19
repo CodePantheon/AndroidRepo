@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.MainActivity">
+    tools:context=".view.HomeActivity">
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_home" />
 
     <!-- Floating action button that launches Add note activity when clicked -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

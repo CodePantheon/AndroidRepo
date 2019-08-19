@@ -9,7 +9,7 @@ import java.util.List;
 public class NotePresenter {
     private final NoteDatabase noteDatabase;
 
-    public NotePresenter(@NotNull NoteDatabase noteDatabase) {
+    NotePresenter(@NotNull NoteDatabase noteDatabase) {
         this.noteDatabase = noteDatabase;
     }
 

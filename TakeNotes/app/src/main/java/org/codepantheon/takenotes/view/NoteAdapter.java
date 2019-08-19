@@ -24,7 +24,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
     }
 
     interface OnNoteLongClickListener{
-        void OnNoteLongClick(NoteInfo noteInfo);
+        void onNoteLongClick(NoteInfo noteInfo);
     }
 
     private List<NoteInfo> noteInfos = new ArrayList<>();
@@ -106,23 +106,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
             mSummeryTextView = itemView.findViewById(R.id.tv_summary);
 
             itemView.setOnClickListener(this::onItemClick);
-
-            // long click event subscription
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                public boolean onLongClick(View view) {
-                    setLongClickSelection(view);
-                    return true;
-                }
-            });
-        }
-
-        // long click event handler
-        private void setLongClickSelection(View view) {
-            if (noteAdapter.onNoteLongClickListener != null) {
-                view.setBackgroundColor(Color.parseColor("#ffb2b2"));
-                noteAdapter.onNoteLongClickListener.OnNoteLongClick(noteInfo);
-                noteAdapter.areItemsSelected = true;
-            }
+            itemView.setOnLongClickListener(this::onItemLongPress);
         }
 
         private void setNoteInfo(NoteInfo noteInfo){
@@ -134,17 +118,26 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         }
 
         private void onItemClick(View view) {
-
             // if long click selection is already in progress, treat normal click also for selection.
             if (noteAdapter.areItemsSelected) {
-                setLongClickSelection(view);
-                return;
-            }
-            if(this.noteAdapter.onNoteSelectedListener == null){
+                onItemLongPress(view);
                 return;
             }
 
-            noteAdapter.onNoteSelectedListener.onNoteSelected(noteInfo);
+            if(this.noteAdapter.onNoteSelectedListener != null){
+                noteAdapter.onNoteSelectedListener.onNoteSelected(noteInfo);
+            }
+        }
+
+        private boolean onItemLongPress(View view) {
+            view.setBackgroundColor(Color.parseColor("#ffb2b2"));
+            noteAdapter.areItemsSelected = true;
+
+            if (noteAdapter.onNoteLongClickListener != null) {
+                noteAdapter.onNoteLongClickListener.onNoteLongClick(noteInfo);
+            }
+
+            return true;
         }
     }
 }

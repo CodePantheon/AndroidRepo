@@ -1,6 +1,5 @@
 package org.codepantheon.takenotes.view;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -26,25 +25,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
+    private final List<NoteInfo> selectedNotes = new ArrayList<>();
     private NotePresenter notePresenter;
     private NoteAdapter noteAdapter;
-    private RecyclerView mRecyclerView;
-    private List<NoteInfo> selectedNotes = new ArrayList<>();
+    private Menu homeMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home);
 
         notePresenter = NotePresenterFactory.create(this);
         noteAdapter = new NoteAdapter();
         noteAdapter.setOnNoteSelectedListener(this::onNoteSelected);
         noteAdapter.setOnNoteLongClickListener(this::onNoteLongClicked);
 
-        mRecyclerView = findViewById(R.id.rv_note_container);
-        mRecyclerView.setAdapter(noteAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recyclerView = findViewById(R.id.rv_note_container);
+        recyclerView.setAdapter(noteAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(this::showNewNotePage);
@@ -63,27 +62,25 @@ public class MainActivity extends AppCompatActivity {
                 onNoteItemSwipe(position);
             }
         };
-        new ItemTouchHelper(callback).attachToRecyclerView(mRecyclerView);
+        new ItemTouchHelper(callback).attachToRecyclerView(recyclerView);
     }
 
     private void onNoteItemSwipe(int swipePosition) {
-
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle(R.string.delete_dialog_title);
         adb.setIcon(android.R.drawable.ic_delete);
-        adb.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                NoteInfo swipedItem = noteAdapter.deleteNoteAtPosition(swipePosition);
-                notePresenter.deleteNote(swipedItem);
-                Toast.makeText(getApplicationContext(), R.string.delete_message, Toast.LENGTH_LONG).show();
-            }
+
+        adb.setPositiveButton(R.string.ok, (dialog, which) -> {
+            NoteInfo swipedItem = noteAdapter.deleteNoteAtPosition(swipePosition);
+            notePresenter.deleteNote(swipedItem);
+            Toast.makeText(getApplicationContext(), R.string.delete_message, Toast.LENGTH_LONG).show();
         });
-        adb.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                noteAdapter.notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), getString(R.string.cancel_message), Toast.LENGTH_LONG).show();
-            }
+
+        adb.setNegativeButton(R.string.cancel, (dialog, which) -> {
+            noteAdapter.notifyDataSetChanged();
+            Toast.makeText(getApplicationContext(), getString(R.string.cancel_message), Toast.LENGTH_LONG).show();
         });
+
         adb.show();
     }
 
@@ -97,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        homeMenu = menu;
+        getMenuInflater().inflate(R.menu.menu_main, homeMenu);
         return true;
     }
 
@@ -118,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (noteAdapter.removeSelection()) {
             selectedNotes.clear();
+            setDeleteMenuItemVisible(false);
             return;
         }
         super.onBackPressed();
@@ -127,13 +126,15 @@ public class MainActivity extends AppCompatActivity {
         for ( NoteInfo note : selectedNotes) {
             notePresenter.deleteNote(note);
         }
+
+        setDeleteMenuItemVisible(false);
         noteAdapter.removeSelection();
         selectedNotes.clear();
         noteAdapter.setNotes(notePresenter.getAllNotes());
     }
 
     private void showNewNotePage(View view) {
-        Intent newPageIntent = new Intent(this, NewNoteActivity.class);
+        Intent newPageIntent = new Intent(this, NoteActivity.class);
         startActivity(newPageIntent);
     }
 
@@ -143,12 +144,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onNoteSelected(NoteInfo noteInfo) {
-        Intent editNotePageIntent = new Intent(this, NewNoteActivity.class);
+        Intent editNotePageIntent = new Intent(this, NoteActivity.class);
         editNotePageIntent.putExtra(NoteInfo.class.getSimpleName(), noteInfo);
         startActivity(editNotePageIntent);
     }
 
     private void onNoteLongClicked(NoteInfo noteInfo) {
+        setDeleteMenuItemVisible(true);
         selectedNotes.add(noteInfo);
+    }
+
+    private void setDeleteMenuItemVisible(boolean visible){
+        MenuItem deleteMenuItem = homeMenu.findItem(R.id.delete_menu_button);
+        if(deleteMenuItem == null){
+            return;
+        }
+
+        deleteMenuItem.setVisible(visible);
     }
 }

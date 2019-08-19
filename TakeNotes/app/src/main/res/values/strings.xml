@@ -9,4 +9,5 @@
     <string name="delete_dialog_title">Delete Note?</string>
     <string name="cancel">Cancel</string>
     <string name="cancel_message">Cancelled!</string>
+    <string name="delete">Delete</string>
 </resources>

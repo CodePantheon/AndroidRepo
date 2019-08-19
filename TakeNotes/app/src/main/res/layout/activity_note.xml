@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.NewNoteActivity">
+    tools:context=".view.NoteActivity">
 
-    <include layout="@layout/content_new_note" />
+    <include layout="@layout/content_note" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -11,7 +11,7 @@ import org.codepantheon.takenotes.model.NoteInfo;
 import org.codepantheon.takenotes.presenter.NotePresenter;
 import org.codepantheon.takenotes.presenter.NotePresenterFactory;
 
-public class NewNoteActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity {
     private NoteInfo currentNoteInfo = new NoteInfo();
     private NotePresenter notePresenter;
     private EditText titleEditText;
@@ -20,7 +20,7 @@ public class NewNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_note);
+        setContentView(R.layout.activity_note);
 
         notePresenter = NotePresenterFactory.create(this);
         titleEditText = findViewById(R.id.et_title);

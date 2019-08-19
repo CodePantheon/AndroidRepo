@@ -1,17 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.codepantheon.takenotes.view.MainActivity">
+    tools:context="org.codepantheon.takenotes.view.HomeActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/action_settings" />
 
     <item
         android:id="@+id/delete_menu_button"
-        android:title="Delete"
-        app:showAsAction="always"
+        android:title="@string/delete"
         android:icon="@android:drawable/ic_menu_delete"
-        />
+        android:visible="false"
+        app:showAsAction="always"/>
 </menu>
