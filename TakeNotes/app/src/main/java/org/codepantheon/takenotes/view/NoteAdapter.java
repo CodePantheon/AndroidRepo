@@ -106,7 +106,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
             mSummeryTextView = itemView.findViewById(R.id.tv_summary);
 
             itemView.setOnClickListener(this::onItemClick);
-            itemView.setOnLongClickListener(this::onItemLongPress);
+            itemView.setOnLongClickListener(this::onItemLongClick);
         }
 
         private void setNoteInfo(NoteInfo noteInfo){
@@ -120,7 +120,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         private void onItemClick(View view) {
             // if long click selection is already in progress, treat normal click also for selection.
             if (noteAdapter.areItemsSelected) {
-                onItemLongPress(view);
+                onItemLongClick(view);
                 return;
             }
 
@@ -129,7 +129,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
             }
         }
 
-        private boolean onItemLongPress(View view) {
+        private boolean onItemLongClick(View view) {
             view.setBackgroundColor(Color.parseColor("#ffb2b2"));
             noteAdapter.areItemsSelected = true;
 
