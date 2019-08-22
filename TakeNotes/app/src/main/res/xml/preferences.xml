@@ -2,8 +2,8 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
         android:defaultValue="true"
-        android:summaryOn="Shown"
-        android:summaryOff="Hidden"
-        android:key="visibility"
-        android:title="Text Visibility"/>
+        android:summaryOn="Enabled"
+        android:summaryOff="Disabled"
+        android:key="swipeRightToDelete"
+        android:title="Delete on Swipe Right"/>
 </androidx.preference.PreferenceScreen>
