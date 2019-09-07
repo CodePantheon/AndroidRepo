@@ -49,7 +49,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         Log.v("TakeNotes", "onCreateViewHolder");
 
         // sets default background color for each note item; this helps in resetting selection.
-        holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
+        holder.itemView.setBackgroundResource(R.drawable.bg_note_item);
         holder.itemView.setAnimation(noteItemAnimation);
         holder.setNoteInfo(noteInfos.get(position));
     }
@@ -137,7 +137,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
         }
 
         private boolean onItemLongClick(View view) {
-            view.setBackgroundColor(Color.parseColor("#ffb2b2"));
+            view.setBackgroundResource(R.drawable.bg_selected_note_item);
             noteAdapter.areItemsSelected = true;
 
             if (noteAdapter.onNoteLongClickListener != null) {

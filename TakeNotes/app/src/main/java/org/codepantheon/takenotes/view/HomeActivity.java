@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import org.codepantheon.takenotes.R;
@@ -35,9 +37,11 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Animation noteItemAnimation = AnimationUtils.loadAnimation(this, R.anim.note_anim);
 
         notePresenter = NotePresenterFactory.create(this);
         noteAdapter = new NoteAdapter();
+        noteAdapter.setAnimationObject(noteItemAnimation);
         noteAdapter.setOnNoteSelectedListener(this::onNoteSelected);
         noteAdapter.setOnNoteLongClickListener(this::onNoteLongClicked);
 
