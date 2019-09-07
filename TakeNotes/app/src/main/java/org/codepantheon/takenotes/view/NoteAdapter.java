@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
     private OnNoteSelectedListener onNoteSelectedListener;
     private OnNoteLongClickListener onNoteLongClickListener;
     private boolean areItemsSelected = false;
+    private Animation noteItemAnimation;
 
     @NonNull
     @Override
@@ -48,7 +50,12 @@ class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
 
         // sets default background color for each note item; this helps in resetting selection.
         holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
+        holder.itemView.setAnimation(noteItemAnimation);
         holder.setNoteInfo(noteInfos.get(position));
+    }
+
+    void setAnimationObject(Animation noteItemAnimation) {
+        this.noteItemAnimation = noteItemAnimation;
     }
 
     // resets background of each card item on selection removal.
