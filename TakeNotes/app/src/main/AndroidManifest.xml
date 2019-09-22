@@ -3,6 +3,8 @@
     package="org.codepantheon.takenotes">
 
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+
     <application
 
         android:allowBackup="true"
